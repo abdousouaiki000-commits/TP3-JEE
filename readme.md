@@ -152,25 +152,27 @@ public void init() {
 👉 Permet de vérifier l’implémentation injectée.
 
 ---
-
 ## ▶️ Exécution
-varianve A
-![img.png](images/img.png)
-![img_1.png](images/img_1.png)
-![img_2.png](images/img_2.png)
-variance B
-![img_3.png](images/img_3.png)
-![img_4.png](images/img_4.png)
-![img_5.png](images/img_5.png)
-![img_6.png](images/img_6.png)
-variance C
-![img_7.png](images/img_7.png)
-![img_8.png](images/img_8.png)
-![img_9.png](images/img_9.png)
-derniere methode
-![img_10.png](images/img_10.png)
-![img_11.png](images/img_11.png)
----
+
+### Variance A
+![img](images/img.png)
+![img](images/img_1.png)
+![img](images/img_2.png)
+
+### Variance B
+![img](images/img_3.png)
+![img](images/img_4.png)
+![img](images/img_5.png)
+![img](images/img_6.png)
+
+### Variance C
+![img](images/img_7.png)
+![img](images/img_8.png)
+![img](images/img_9.png)
+
+### Dernière méthode
+![img](images/img_10.png)
+![img](images/img_11.png)
 
 ## 🧪 Résultats attendus
 
