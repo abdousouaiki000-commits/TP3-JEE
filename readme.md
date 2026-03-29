@@ -156,7 +156,23 @@ public void init() {
 
 ### Variance A
 ![img](images/img.png)
+![img](images/img_1.png)
+![img](images/img_2.png)
 
+### Variance B
+![img](images/img_3.png)
+![img](images/img_4.png)
+![img](images/img_5.png)
+![img](images/img_6.png)
+
+### Variance C
+![img](images/img_7.png)
+![img](images/img_8.png)
+![img](images/img_9.png)
+
+### Dernière méthode
+![img](images/img_10.png)
+![img](images/img_11.png)
 
 ## 🧪 Résultats attendus
 
