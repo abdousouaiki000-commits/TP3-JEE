@@ -1,235 +1,206 @@
-# TP2 - Application Java avec Spring (IoC & Dependency Injection)
+# TP3 - Spring IoC & Injection de Dépendances (OCP)
 
-## Description du projet
+## 📌 Description
 
-Ce projet est un travail pratique visant à créer une application Java utilisant le framework **Spring** afin de mettre en œuvre les principes de **l’inversion de contrôle (IoC)** et de **l’injection de dépendances (DI)**.
+Ce travail pratique a pour objectif de mettre en œuvre le principe de **l’inversion de contrôle (IoC)** et de **l’injection de dépendances (DI)** avec le framework **Spring**.
 
-L'application est organisée selon une architecture en couches comprenant :
-
-* une **couche DAO** responsable de l'accès aux données,
-* une **couche métier** contenant la logique applicative,
-* une **couche de présentation** permettant l’exécution de l’application.
-
-Le projet démontre comment Spring permet de gérer automatiquement les dépendances entre les composants grâce à la configuration XML et aux annotations.
+Le TP démontre comment **changer dynamiquement l’implémentation d’une dépendance (`IDao`) sans modifier la classe métier (`MetierImpl`)**, en respectant le principe **OCP (Open/Closed Principle)**.
 
 ---
 
-## Objectifs pédagogiques
+## 🎯 Objectifs
 
-Les principaux objectifs de ce laboratoire sont :
+* Comprendre **IoC (Inversion of Control)**
+* Maîtriser **l’injection de dépendances avec Spring**
+* Appliquer le principe **OCP**
+* Utiliser différentes stratégies de sélection d’implémentation :
 
-* Comprendre le principe de **l’inversion de contrôle (IoC)**.
-* Utiliser **Spring Framework** pour gérer les dépendances entre les classes.
-* Implémenter une architecture **DAO / Métier / Présentation**.
-* Utiliser **Maven** pour la gestion des dépendances.
-* Tester la couche métier avec **JUnit**.
-
----
-
-## Prérequis
-
-Avant d’exécuter ce projet, les outils suivants doivent être installés :
-
-* **JDK 11 ou supérieur**
-* **IntelliJ IDEA ou Eclipse**
-* **Apache Maven**
-* **Spring Framework**
+    * Profils Spring (@Profile)
+    * Configuration Java (@Bean)
+    * Propriétés externes (app.properties)
 
 ---
 
-## Technologies utilisées
+## 🧱 Architecture du projet
 
-Ce projet utilise les technologies suivantes :
+Le projet est structuré en 3 couches :
 
-* **Java**
-* **Spring Framework (spring-context)**
-* **Maven**
-* **JUnit**
-* **IntelliJ IDEA**
-
----
-
-## Structure du projet
-
-Le projet est structuré de la manière suivante :
+* **DAO** : accès aux données
+* **Métier** : logique applicative
+* **Présentation** : exécution de l’application
 
 ```
 src
+├── dao
+│   ├── IDao.java
+│   ├── DaoImpl.java
+│   ├── DaoImpl2.java
+│   ├── DaoFile.java
+│   └── DaoApi.java
 │
-├── main
-│   ├── java
-│   │   ├── dao
-│   │   │   ├── IDao.java
-│   │   │   ├── DaoImpl.java
-│   │   │   └── DaoImpl2.java
-│   │   │
-│   │   ├── metier
-│   │   │   ├── IMetier.java
-│   │   │   └── MetierImpl.java
-│   │   │
-│   │   ├── presentation
-│   │   │   ├── Presentation2.java
-│   │   │   └── PresentationXML.java
-│   │   │
-│   │   └── org.example
-│   │       └── App.java
-│   │
-│   └── resources
-│       └── applicationContext.xml
+├── metier
+│   ├── IMetier.java
+│   └── MetierImpl.java
 │
-└── test
-    └── java
-        └── metier
-            └── MetierImplTest.java
+├── config
+│   ├── DaoAliasConfig.java
+│   └── PropertyDrivenConfig.java
+│
+├── presentation
+│   └── Presentation2.java
+│
+└── resources
+    └── app.properties
 ```
 
 ---
 
-## Description des packages
+## ⚙️ Fonctionnement du projet
 
-### Package `dao`
+La classe métier :
 
-Ce package contient les classes responsables de l'accès aux données.
-
-* **IDao** : interface définissant la méthode `getValue()`.
-* **DaoImpl** : première implémentation de l'interface DAO.
-* **DaoImpl2** : deuxième implémentation du DAO.
-
-Ces classes simulent une source de données.
-
----
-
-### Package `metier`
-
-Ce package contient la logique métier de l'application.
-
-* **IMetier** : interface définissant la méthode `calcul()`.
-* **MetierImpl** : implémentation de la couche métier.
-
-La classe `MetierImpl` dépend d'une implémentation de `IDao`.
-Spring se charge d'injecter cette dépendance.
-
-Exemple de logique métier :
-
+```java
+@Autowired
+private IDao dao;
 ```
-result = dao.getValue() * 2
+
+👉 Spring injecte automatiquement une implémentation de `IDao`.
+
+Le calcul métier :
+
+```java
+return dao.getValue() * 2;
 ```
 
 ---
 
-### Package `presentation`
+## 🧪 Implémentations DAO
 
-Ce package contient les classes permettant d’exécuter l’application.
-
-* **Presentation2** : exécution utilisant la configuration via annotations.
-* **PresentationXML** : exécution utilisant la configuration XML Spring.
-
-Ces classes chargent le **contexte Spring** et récupèrent les beans nécessaires.
-
----
-
-### Dossier `resources`
-
-Contient le fichier :
-
-```
-applicationContext.xml
-```
-
-Ce fichier définit la configuration Spring et les beans utilisés par l'application.
+| Classe   | Valeur retournée |
+| -------- | ---------------- |
+| DaoImpl  | 100              |
+| DaoImpl2 | 150              |
+| DaoFile  | 180              |
+| DaoApi   | 220              |
 
 ---
 
-### Dossier `test`
+## 🔵 Variante A — @Profile
 
-Contient les **tests unitaires**.
+Chaque DAO est annoté avec :
 
-* **MetierImplTest** : test de la couche métier utilisant **JUnit**.
-
-Ce test vérifie que la méthode `calcul()` retourne la valeur attendue.
-
-Exemple :
-
+```java
+@Profile("prod")
 ```
-10 * 2 = 20
+
+Activation dans `Presentation2` :
+
+```java
+ctx.getEnvironment().setActiveProfiles("prod");
 ```
 
 ---
 
-## Fonctionnement de l'injection de dépendances
+## 🟢 Variante B — @Bean (Alias)
 
-Spring se charge d’injecter automatiquement l’implémentation de `IDao` dans `MetierImpl`.
+Créer un bean personnalisé :
 
-Cela permet de :
+```java
+@Bean(name = "dao")
+public IDao daoAlias() {
+    return new DaoApi();
+}
+```
 
-* réduire le couplage entre les classes,
-* faciliter les tests,
-* améliorer la maintenabilité du code.
-
-L'injection peut être réalisée via :
-
-* **XML**
-* **Annotations**
+👉 Permet de changer l’implémentation via la configuration Java.
 
 ---
 
-## Exécution du projet
+## 🟡 Variante C — app.properties
 
-### Exécution avec configuration XML
-
-Lancer la classe :
+Fichier :
 
 ```
-PresentationXML
+src/main/resources/app.properties
 ```
 
-Spring charge le fichier :
-
-```
-applicationContext.xml
+```properties
+dao.target=daoApi
 ```
 
-et instancie les beans nécessaires.
+Configuration :
+
+```java
+@PropertySource("classpath:app.properties")
+```
+
+👉 Spring sélectionne dynamiquement le DAO selon la propriété.
 
 ---
 
-### Exécution avec annotations
+## 🧾 Journalisation (Debug)
 
-Lancer la classe :
+Ajout dans `MetierImpl` :
 
+```java
+@PostConstruct
+public void init() {
+    System.out.println("[TRACE] DAO injecté = " + dao.getClass().getSimpleName());
+}
 ```
-Presentation2
-```
 
-Spring détecte automatiquement les composants grâce aux annotations.
+👉 Permet de vérifier l’implémentation injectée.
 
 ---
 
-## Exécution des tests
+## ▶️ Exécution
+varianve A
+![img.png](img.png)
+![img_1.png](img_1.png)
+![img_2.png](img_2.png)
+variance B
+![img_3.png](img_3.png)
+![img_4.png](img_4.png)
+![img_5.png](img_5.png)
+![img_6.png](img_6.png)
+variance C
+![img_7.png](img_7.png)
+![img_8.png](img_8.png)
+![img_9.png](img_9.png)
+derniere methode
+![img_10.png](img_10.png)
+![img_11.png](img_11.png)
+---
 
-Les tests peuvent être exécutés avec :
+## 🧪 Résultats attendus
 
-* IntelliJ IDEA (Run Test)
-* Maven
-
-Commande Maven :
-
-```
-mvn test
-```
-
-Le test `MetierImplTest` vérifie que la couche métier fonctionne correctement.
+| dao.target | Résultat |
+| ---------- | -------- |
+| dao        | 200      |
+| dao2       | 300      |
+| daoFile    | 360      |
+| daoApi     | 440      |
 
 ---
 
-## Conclusion
+## ⚠️ Règles importantes
 
-Ce projet illustre l'utilisation du framework **Spring** pour gérer les dépendances entre les composants d'une application Java.
-
-L'utilisation de **l'inversion de contrôle** permet de séparer clairement les responsabilités entre les différentes couches de l'application, rendant le code plus flexible, testable et maintenable.
+* ❌ Ne pas modifier `MetierImpl`
+* ❌ Ne pas utiliser `@Qualifier`
+* ✔️ Utiliser uniquement la configuration pour changer le DAO
 
 ---
 
-## Auteur
+## ✅ Conclusion
+
+Ce TP illustre la puissance de Spring pour :
+
+* découpler les composants
+* changer le comportement sans modifier le code
+* respecter le principe **OCP**
+
+---
+
+## 👤 Auteur
 
 **Abderrahmane Souaiki**
